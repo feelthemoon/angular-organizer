@@ -12,8 +12,11 @@ interface CreateResponse {
 })
 export class TaskService {
   static URL =
-    'https://organizer-f858c-default-rtdb.europe-west1.firebasedatabase.app/tasks';
+    'https://organizer-7f06f-default-rtdb.europe-west1.firebasedatabase.app/tasks';
   constructor(private http: HttpClient) {}
+  loadAll(): Promise<any>{
+    return this.http.get(`${TaskService.URL}.json`).toPromise();
+  }
   load(date: moment.Moment): Observable<Task[]>{
     return this.http
       .get<Task[]>(`${TaskService.URL}/${date.format('DD-MM-YYYY')}.json`)
@@ -34,7 +37,7 @@ export class TaskService {
         })
       );
   }
-  remove(task: Task): Observable<void>{
-    return this.http.delete<void>(`${TaskService.URL}/${task.date}/${task.id}.json`);
+  remove(task: Task): Promise<any>{
+    return this.http.delete<void>(`${TaskService.URL}/${task.date}/${task.id}.json`).toPromise();
   }
 }

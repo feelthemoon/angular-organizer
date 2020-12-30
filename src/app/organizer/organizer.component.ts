@@ -5,7 +5,7 @@ import { TaskService } from '../shared/task.service';
 import { Task } from '../shared/models/task.model';
 import { switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
-
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-organizer',
@@ -16,10 +16,11 @@ export class OrganizerComponent implements OnInit {
   form: FormGroup;
   tasks: Task[] = [];
   now: string;
-  isAvailable: boolean;
+  isAvailable = false;
   constructor(
     private dateService: DateService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +37,9 @@ export class OrganizerComponent implements OnInit {
   get date(): DateService {
     const current = moment(this.dateService.date.value).format('YYYY-MM-DD');
     this.isAvailable = moment(current).isBefore(this.now);
+    this.isAvailable
+      ? this.form.controls.title.disable()
+      : this.form.controls.title.enable();
     return this.dateService;
   }
 
@@ -45,8 +49,11 @@ export class OrganizerComponent implements OnInit {
       title,
       date: this.dateService.date.value.format('DD-MM-YYYY'),
     };
+
+    this.spinner.show();
     this.taskService.create(task).subscribe(
       (t: Task) => {
+        this.spinner.hide();
         this.tasks.push(t);
         this.form.reset();
       },
@@ -54,11 +61,10 @@ export class OrganizerComponent implements OnInit {
     );
   }
   remove(task: Task): void {
-    this.taskService.remove(task).subscribe(
-      () => {
-        this.tasks = this.tasks.filter((t) => t.id !== task.id);
-      },
-      (error) => console.error(error)
-    );
+    this.spinner.show();
+    this.taskService.remove(task).then(() => {
+      this.spinner.hide();
+      this.tasks = this.tasks.filter((t) => t.id !== task.id);
+    });
   }
 }

@@ -5,4 +5,5 @@ export interface Day{
   active: boolean;
   disabled: boolean;
   selected: boolean;
+  hasTask: boolean;
 }

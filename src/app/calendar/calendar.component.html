@@ -17,7 +17,7 @@
         [class.disabled]="day.disabled"
         (click)="select(day.value)"
       >
-        <span [class.selected]="day.selected" [class.active]="day.active">{{
+        <span [class.selected]="day.selected" [class.active]="day.active" [class.hasTask]="day.hasTask">{{
           day.value | moment: "DD"
         }}</span>
       </td>
