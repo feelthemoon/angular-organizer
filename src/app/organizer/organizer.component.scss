@@ -1,0 +1,19 @@
+section{
+  border: 1px solid black;
+  padding: 1rem;
+  margin-top: 1rem;
+  .head{
+    margin-bottom: 1rem;
+  }
+  .task{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem 1rem;
+    border: 1px solid #ccc;
+    margin-bottom: .5rem;
+  }
+}
+strong{
+  margin-right: 1rem;
+}
