@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Task } from './models/task.model';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import * as moment from 'moment';
 interface CreateResponse {
   name: string;
@@ -13,6 +13,8 @@ interface CreateResponse {
 export class TaskService {
   static URL =
     'https://organizer-7f06f-default-rtdb.europe-west1.firebasedatabase.app/tasks';
+  private createdSource = new Subject<any>();
+  created$ = this.createdSource.asObservable();
   constructor(private http: HttpClient) {}
   loadAll(): Promise<any>{
     return this.http.get(`${TaskService.URL}.json`).toPromise();
@@ -36,6 +38,9 @@ export class TaskService {
           return { ...task, id: r.name };
         })
       );
+  }
+  changeCreated(val): void{
+    this.createdSource.next(val);
   }
   remove(task: Task): Promise<any>{
     return this.http.delete<void>(`${TaskService.URL}/${task.date}/${task.id}.json`).toPromise();

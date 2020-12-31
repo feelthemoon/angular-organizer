@@ -49,7 +49,6 @@ export class OrganizerComponent implements OnInit {
       title,
       date: this.dateService.date.value.format('DD-MM-YYYY'),
     };
-
     this.spinner.show();
     this.taskService.create(task).subscribe(
       (t: Task) => {
@@ -59,12 +58,20 @@ export class OrganizerComponent implements OnInit {
       },
       (error) => console.error(error)
     );
+    this.taskService.changeCreated(true);
   }
   remove(task: Task): void {
     this.spinner.show();
-    this.taskService.remove(task).then(() => {
-      this.spinner.hide();
-      this.tasks = this.tasks.filter((t) => t.id !== task.id);
-    });
+    this.taskService
+      .remove(task)
+      .then(() => {
+        this.spinner.hide();
+        this.tasks = this.tasks.filter((t) => t.id !== task.id);
+      })
+      .then(() => {
+        if (this.tasks.length === 0){
+          this.taskService.changeCreated(false);
+        }
+      });
   }
 }
